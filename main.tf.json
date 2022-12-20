@@ -1,0 +1,145 @@
+{
+  "provider" : {
+
+    "google.g1" : [
+      {
+        "region" : "us-central1"
+      },
+      {
+        "project" : "norton-sandbox"
+      },
+      {
+        "credentials" : "keys.json"
+      }
+    ]
+  },
+
+  "module": [
+    {
+      "service_accounts": [
+        {
+          "display_name": "Service Account for CoreStack",
+          "names": "new-gcp-service-account",
+          "project_id": "norton-sandbox",
+          "project_roles": "norton-sandbox=>roles/editor",
+          "source": "terraform-google-modules/service-accounts/google",
+          "version": "~> 3.0"
+        }
+      ]
+    },
+    {
+      "bucket": [
+        {
+          "location": "us-central1",
+          "name": "new-bucket-cs-hey-norton",
+          "project_id": "norton-sandbox",
+          "source": "terraform-google-modules/cloud-storage/google//modules/simple_bucket",
+          "version": "~> 1.3"
+        }
+      ]
+    }
+  ],
+
+  "resource": [
+    {
+      "google_bigquery_data_transfer_config": [
+        {
+          "query_config_1": [
+            {
+              "data_source_id": "scheduled_query",
+              "display_name": "corestack-daily-query",
+              "location": "us-central1",
+              "params": 
+                {
+                  "query": "DECLARE unused STRING; DECLARE current_month_date DATE DEFAULT DATE_SUB(@run_date, INTERVAL 0 MONTH); DECLARE cost_data_invoice_month NUMERIC DEFAULT EXTRACT(MONTH FROM current_month_date); DECLARE cost_data_invoice_year NUMERIC DEFAULT EXTRACT(YEAR FROM current_month_date); EXPORT DATA OPTIONS ( uri = CONCAT('gs://hey-norton-bucket', CAST(cost_data_invoice_year AS STRING), '-', CAST(current_month_date AS STRING FORMAT('MM')), '/*.csv'), format='JSON', overwrite=True) AS SELECT *, (SELECT STRING_AGG(display_name, '/') FROM B.project.ancestors) organization_list FROM `norton-sandbox.hey_norton_billing_data.billing-data-placeholder` as B WHERE B.invoice.month = CONCAT(CAST(cost_data_invoice_year AS STRING), CAST(current_month_date AS STRING FORMAT('MM'))) AND B.cost != 0.0"
+                }
+              ,
+              "project": "norton-sandbox",
+              "schedule": "every 24 hours"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "google_bigquery_data_transfer_config": [
+        {
+          "query_config_2": [
+            {
+              "data_source_id": "scheduled_query",
+              "display_name": "corestack-monthly-query",
+              "location": "us-central1",
+              "params": 
+                {
+                  "query": "DECLARE unused STRING; DECLARE current_month_date DATE DEFAULT DATE_SUB(@run_date, INTERVAL 1 MONTH); DECLARE cost_data_invoice_month NUMERIC DEFAULT EXTRACT(MONTH FROM current_month_date); DECLARE cost_data_invoice_year NUMERIC DEFAULT EXTRACT(YEAR FROM current_month_date); EXPORT DATA OPTIONS ( uri = CONCAT('gs://hey-norton-bucket', CAST (cost_data_invoice_year AS STRING), '-', CAST(current_month_date AS STRING FORMAT('MM')), '/*.csv'), format='JSON', overwrite=True) AS SELECT *, (SELECT STRING_AGG(display_name, '/') FROM B.project.ancestors) organization_list FROM `norton-sandbox.hey_norton_billing_data.billing-data-placeholder` as B WHERE B.invoice.month = CONCAT(CAST(cost_data_invoice_year AS STRING), CAST (current_month_date AS STRING FORMAT('MM'))) AND B.cost != 0.0"
+                }
+              ,
+              "project": "norton-sandbox",
+              "schedule": "5 of month 00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "google_bigquery_data_transfer_config": [
+        {
+          "query_config_3": [
+            {
+              "data_source_id": "scheduled_query",
+              "display_name": "corestack-on-demand-1",
+              "location": "us-central1",
+              "params": 
+                {
+                  "query": "DECLARE unused STRING; DECLARE current_month_date DATE DEFAULT DATE_SUB(@run_date, INTERVAL 1 MONTH); DECLARE cost_data_invoice_month NUMERIC DEFAULT EXTRACT(MONTH FROM current_month_date); DECLARE cost_data_invoice_year NUMERIC DEFAULT EXTRACT(YEAR FROM current_month_date); EXPORT DATA OPTIONS ( uri = CONCAT('gs://hey-norton-bucket', CAST(cost_data_invoice_year AS STRING), '-', CAST(current_month_date AS STRING FORMAT('MM')), '/*.csv'), format='JSON', overwrite=True) AS SELECT *, (SELECT STRING_AGG(display_name, '/') FROM B.project.ancestors) organization_list FROM `norton-sandbox.hey_norton_billing_data.billing-data-placeholder` as B WHERE B.invoice.month = CONCAT(CAST(cost_data_invoice_year AS STRING), CAST(current_month_date AS STRING FORMAT('MM'))) AND B.cost != 0.0"
+                }
+              ,
+              "project": "norton-sandbox",
+              "schedule": "None"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "google_bigquery_data_transfer_config": [
+        {
+          "query_config_4": [
+            {
+              "data_source_id": "scheduled_query",
+              "display_name": "corestack-on-demand-2",
+              "location": "us-central1",
+              "params": 
+                {
+                  "query": "DECLARE unused STRING; DECLARE current_month_date DATE DEFAULT DATE_SUB(@run_date, INTERVAL 2 MONTH); DECLARE cost_data_invoice_month NUMERIC DEFAULT EXTRACT(MONTH FROM current_month_date); DECLARE cost_data_invoice_year NUMERIC DEFAULT EXTRACT(YEAR FROM current_month_date); EXPORT DATA OPTIONS ( uri = CONCAT('gs://hey-norton-bucket', CAST(cost_data_invoice_year AS STRING), '-', CAST(current_month_date AS STRING FORMAT('MM')), '/*.csv'), format='JSON', overwrite=True) AS SELECT *, (SELECT STRING_AGG(display_name, '/') FROM B.project.ancestors) organization_list FROM `norton-sandbox.hey_norton_billing_data.billing-data-placeholder` as B WHERE B.invoice.month = CONCAT(CAST(cost_data_invoice_year AS STRING), CAST(current_month_date AS STRING FORMAT('MM'))) AND B.cost != 0.0"
+                }
+              ,
+              "project": "norton-sandbox",
+              "schedule": "None"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "google_bigquery_data_transfer_config": [
+        {
+          "query_config_5": [
+            {
+              "data_source_id": "scheduled_query",
+              "display_name": "corestack-on-demand-3",
+              "location": "us-central1",
+              "params": 
+                {
+                  "query": "DECLARE unused STRING; DECLARE current_month_date DATE DEFAULT DATE_SUB(@run_date, INTERVAL 3 MONTH); DECLARE cost_data_invoice_month NUMERIC DEFAULT EXTRACT(MONTH FROM current_month_date); DECLARE cost_data_invoice_year NUMERIC DEFAULT EXTRACT(YEAR FROM current_month_date); EXPORT DATA OPTIONS ( uri = CONCAT('gs://hey-norton-bucket', CAST(cost_data_invoice_year AS STRING), '-', CAST(current_month_date AS STRING FORMAT('MM')), '/*.csv'), format='JSON', overwrite=True) AS SELECT *, (SELECT STRING_AGG(display_name, '/') FROM B.project.ancestors) organization_list FROM `norton-sandbox.hey_norton_billing_data.billing-data-placeholder` as B WHERE B.invoice.month = CONCAT(CAST(cost_data_invoice_year AS STRING), CAST(current_month_date AS STRING FORMAT('MM'))) AND B.cost != 0.0"
+                }
+              ,
+              "project": "norton-sandbox",
+              "schedule": "None"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
